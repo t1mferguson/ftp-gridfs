@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:mongo="http://www.springframework.org/schema/data/mongo"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/data/mongo 
+                      http://www.springframework.org/schema/data/mongo/spring-mongo.xsd
+                      http://www.springframework.org/schema/beans 
+                      http://www.springframework.org/schema/beans/spring-beans.xsd
+                      http://www.springframework.org/schema/context
+					  http://www.springframework.org/schema/context/spring-context.xsd
+					  http://mina.apache.org/ftpserver/spring/v1
+             		  http://mina.apache.org/ftpserver/ftpserver-1.0.xsd ">
+
+	<context:annotation-config />
+<!-- Default bean name is 'mongo' -->
+    <mongo:mongo host="cayman-vm" port="27017"/>
+	<mongo:db-factory id="mongoDbFactory" dbname="myfiles" mongo-ref="mongo" />
+	<mongo:mapping-converter id="converter" />
+
+	<bean id="gridFsTemplate"
+		class="org.springframework.data.mongodb.gridfs.GridFsTemplate">
+		<constructor-arg ref="mongoDbFactory" />
+		<constructor-arg ref="converter" />
+	</bean>
+
+	<bean id="mongoFileSystem" class="org.ftpgridfs.ftp.mongo.MongoFileSystemFactory">
+	</bean>	
+	
+	<bean id="ftpServer" factory-bean="ftpServerFactory" factory-method="createServer" init-method="start" />
+
+    <bean id="ftpListener" factory-bean="ftpListenerFactory" factory-method="createListener"/>
+    
+	<bean id="ftpListenerFactory" class="org.apache.ftpserver.listener.ListenerFactory">
+		<property name="port" value="2021"/>
+	</bean>
+	<bean id="ftpServerFactory" class="org.apache.ftpserver.FtpServerFactory">
+	    <property name="userManager">
+	        <bean id="ftpUsers" factory-bean="ftpUsersFactory" factory-method="createUserManager" />
+	    </property>
+	    <property name="fileSystem" ref="mongoFileSystem"/>
+		<property name="listeners">
+        <map>
+            <entry key="default" value-ref="ftpListener"/>
+        </map>
+    </property>
+	</bean>
+
+	<bean id="ftpUsersFactory" class="org.apache.ftpserver.usermanager.PropertiesUserManagerFactory">
+	    <property name="file" value="/Users/tferguso/dev/ftp-mongo/ftp-mongo/src/main/resources/users.properties" />
+	</bean>
+</beans>
