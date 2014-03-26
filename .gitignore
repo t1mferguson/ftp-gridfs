@@ -1,3 +1,6 @@
 lib
 log
 target
+.classpath
+.settings
+.project

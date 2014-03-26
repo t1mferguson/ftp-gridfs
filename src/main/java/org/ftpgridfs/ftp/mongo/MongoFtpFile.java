@@ -126,6 +126,9 @@ public class MongoFtpFile implements FtpFile {
 		this.searched = true;
 		this.currDir = currDir;
 		this.fileName = gridFsResource.getFilename();
+		if ("/".equals(currDir)) {
+			fileName = fileName.replaceFirst("/", "");
+		}
 		fileName = fileName.replaceFirst(currDir + "/", "");
 		int slash = fileName.indexOf('/');
 		int filelen = fileName.length();

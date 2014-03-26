@@ -46,6 +46,6 @@
 	</bean>
 
 	<bean id="ftpUsersFactory" class="org.apache.ftpserver.usermanager.PropertiesUserManagerFactory">
-	    <property name="file" value="/Users/tferguso/dev/ftp-mongo/ftp-mongo/src/main/resources/users.properties" />
+	    <property name="url" value="classpath:users.properties" />
 	</bean>
 </beans>

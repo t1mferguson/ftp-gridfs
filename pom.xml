@@ -38,17 +38,31 @@
         <artifactId>spring-data-mongodb</artifactId>
         <version>1.4.0.RELEASE</version>
     </dependency>
-
+	<dependency>
+		<groupId>org.slf4j</groupId>
+		<artifactId>slf4j-api</artifactId>
+		<version>1.7.6</version>
+	</dependency>
     <dependency>
 		<groupId>org.slf4j</groupId>
 		<artifactId>slf4j-log4j12</artifactId>
-		<version>1.5.2</version>
+		<version>1.7.6</version>
 	</dependency>
 </dependencies>
 
 
 <build>
     <plugins>
+    	<plugin>
+  			<groupId>org.apache.maven.plugins</groupId>
+  			<artifactId>maven-compiler-plugin</artifactId>
+  			<version>3.1</version>
+  			<configuration>
+    			<source>1.7</source>
+    			<target>1.7</target>
+  			</configuration>
+		</plugin>
+		
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-dependency-plugin</artifactId>
@@ -71,21 +85,43 @@
       </plugin>
 
 		<plugin>
-			<groupId>org.apache.maven.plugins</groupId>
-			<artifactId>maven-shade-plugin</artifactId>
-			<version>2.2</version>
-			<executions>
-				<execution>
-					<phase>package</phase>
-					<goals>
-						<goal>shade</goal>
-					</goals>
-				</execution>
-			</executions>
-			<configuration>
-				<finalName>uber-${artifactId}-${version}</finalName>
-			</configuration>
-		</plugin>
+       		<groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-jar-plugin</artifactId>
+            <configuration>
+                <archive>
+                    <manifest>
+                        <mainClass>org.ftpgridfs.ftp.mongo.FtpGridFsServer</mainClass>
+                    </manifest>
+                </archive>
+            </configuration>
+        </plugin>
+        <plugin>
+            <groupId>org.dstovall</groupId>
+            <artifactId>onejar-maven-plugin</artifactId>
+            <version>1.4.4</version>
+            <executions>
+                <execution>
+                    <configuration>
+                        <!-- Optional -->
+                        <onejarVersion>0.97</onejarVersion>
+                        
+                        <!-- Optional, default is false -->
+                        <attachToBuild>true</attachToBuild>
+                        <!-- Optional, default is "onejar" -->
+                        <classifier>onejar</classifier>
+                    </configuration>
+                    <goals>
+                        <goal>one-jar</goal>
+                    </goals>
+                </execution>
+            </executions>
+        </plugin>
 	</plugins>
   </build>
+  <pluginRepositories>
+        <pluginRepository>
+            <id>onejar-maven-plugin.googlecode.com</id>
+            <url>http://onejar-maven-plugin.googlecode.com/svn/mavenrepo</url>
+        </pluginRepository>
+    </pluginRepositories>
 </project>
